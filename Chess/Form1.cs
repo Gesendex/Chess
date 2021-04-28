@@ -71,9 +71,9 @@ namespace Chess
                 label3.Text += "\n_clickFigureUpY = " + _clickUpY.ToString() + " _clickFigureUpX = " + _clickUpX.ToString();
                 label2.Text = cellX.ToString() + " " + cellY.ToString();
 
-                if (_board.IsCorrectMove(_board[_clickDownY, _clickDownX], _board[_clickUpY, _clickUpX]))
+                if (_board.IsCorrectMove(_board[_clickDownX,_clickDownY], _board[_clickUpX, _clickUpY]))
                 {
-                    _board.Attack(_board[_clickDownY, _clickDownX], _board[_clickUpY, _clickUpX]);
+                    _board.Attack(_board[_clickDownX, _clickDownY], _board[_clickUpX, _clickUpY]);
                 }
 
             }

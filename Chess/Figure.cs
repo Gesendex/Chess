@@ -26,7 +26,7 @@ namespace Chess
         /// <summary>
         /// Счетчик шагов.
         /// </summary>
-        public int _moveCounter { get; }
+        public int _moveCounter { get; set; }
         public Bitmap _picture { get; set; }
         /// <summary>
         /// Сторона.
@@ -114,10 +114,10 @@ namespace Chess
         }
         
 
-        public void ConvertToCell()
+        public void ConvertTo(TypeFigure type, byte team = 2)
         {
-            _team = 2;
-            _type = TypeFigure.EmptyCell;
+            _team = team;
+            _type = type;
             _picture = GetPictureOrNullForEmptyCell(_type,_team);
 
         }

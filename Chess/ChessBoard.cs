@@ -27,33 +27,33 @@ namespace Chess
         {
             for (int i = 0; i < 8; i++)
             {
-                    this[1, i] = new Figure(1, TypeFigure.Pawn, 1, i);
-                    this[6, i] = new Figure(0, TypeFigure.Pawn, 6, i);
+                    this[i, 1] = new Figure(1, TypeFigure.Pawn, i, 1);
+                    this[i, 6] = new Figure(0, TypeFigure.Pawn, i, 6);
                 for (int j = 2; j < 6; j++)
                 {
-                    this[j, i] = new Figure(2, TypeFigure.EmptyCell, j, i);
+                    this[i, j] = new Figure(2, TypeFigure.EmptyCell, i, j);
                 }
             }
             this[0, 0] = new Figure(1, TypeFigure.Rook, 0, 0);
-            this[0, 7] = new Figure(1, TypeFigure.Rook, 0, 7);
-            this[7, 0] = new Figure(0, TypeFigure.Rook, 7, 0);
+            this[7, 0] = new Figure(1, TypeFigure.Rook, 7, 0);
+            this[0, 7] = new Figure(0, TypeFigure.Rook, 0, 7);
             this[7, 7] = new Figure(0, TypeFigure.Rook, 7, 7);
 
-            this[0, 1] = new Figure(1, TypeFigure.Knight, 0, 1);
-            this[0, 6] = new Figure(1, TypeFigure.Knight, 0, 6);
-            this[7, 1] = new Figure(0, TypeFigure.Knight, 7, 1);
-            this[7, 6] = new Figure(0, TypeFigure.Knight, 7, 6);
+            this[1, 0] = new Figure(1, TypeFigure.Knight, 1, 0);
+            this[6, 0] = new Figure(1, TypeFigure.Knight, 6, 0);
+            this[1, 7] = new Figure(0, TypeFigure.Knight, 1, 7);
+            this[6, 7] = new Figure(0, TypeFigure.Knight, 6, 7);
 
-            this[0, 2] = new Figure(1, TypeFigure.Bishop, 0, 2);
-            this[0, 5] = new Figure(1, TypeFigure.Bishop, 0, 5);
-            this[7, 2] = new Figure(0, TypeFigure.Bishop, 7, 2);
-            this[7, 5] = new Figure(0, TypeFigure.Bishop, 7, 5);
+            this[2, 0] = new Figure(1, TypeFigure.Bishop, 2, 0);
+            this[5, 0] = new Figure(1, TypeFigure.Bishop, 5, 0);
+            this[2, 7] = new Figure(0, TypeFigure.Bishop, 2, 7);
+            this[5, 7] = new Figure(0, TypeFigure.Bishop, 5, 7);
 
-            this[0, 4] = new Figure(1, TypeFigure.King, 0, 4);
-            this[7, 4] = new Figure(0, TypeFigure.King, 7, 4);
+            this[4, 0] = new Figure(1, TypeFigure.King, 4, 0);
+            this[4, 7] = new Figure(0, TypeFigure.King, 4, 7);
 
-            this[0, 3] = new Figure(1, TypeFigure.Queen, 0, 3);
-            this[7, 3] = new Figure(0, TypeFigure.Queen, 7, 3);
+            this[3, 0] = new Figure(1, TypeFigure.Queen, 3, 0);
+            this[3, 7] = new Figure(0, TypeFigure.Queen, 3, 7);
         }
         public void ChessBoardDisplay(Graphics gr)
         {
@@ -74,7 +74,7 @@ namespace Chess
             {
                 for (int j = 0; j < 8; j++)
                 {
-                    this[i, j].Display(new Point( _x + this[i, j].GetPos().Y * 80, _y + this[i, j].GetPos().X * 80), gr);
+                    this[i, j].Display(new Point( (_x + this[i, j].GetPos().X * 80), (_y + this[i, j].GetPos().Y * 80)), gr);
                 }
             }
 
@@ -85,21 +85,46 @@ namespace Chess
             s._type = f._type;
             s._team = f._team;
             s._picture = f._picture;
-            f.ConvertToCell();
+            s._moveCounter = f._moveCounter + 1;
+            if(s._type == TypeFigure.Pawn && (s.GetPos().Y == 7 || s.GetPos().Y == 0))
+            {
+                s.ConvertTo(TypeFigure.Queen, s._team);
+            }
+            f.ConvertTo(TypeFigure.EmptyCell);
 
         }
-        public bool IsCorrectMove(Figure first, Figure second)
+        public bool IsCorrectMove(Figure f, Figure s)
         {
-            if (first._team != second._team)
+            if (f._team != s._team)
             {
-                int fx = first.GetPos().X,
-                fy = first.GetPos().Y,
-                sx = second.GetPos().X,
-                sy = second.GetPos().Y;
-                switch (first._type)
+                int fx = f.GetPos().X,
+                    fy = f.GetPos().Y,
+                    sx = s.GetPos().X,
+                    sy = s.GetPos().Y;
+                switch (f._type)
                 {
                     case TypeFigure.Pawn:
-                        return false;
+                        if (sx == fx && s._type == TypeFigure.EmptyCell)
+                        {
+                            bool firstMove = (f._moveCounter == 0);
+                            if (f._team == 0 && fy - sy == 1 || fy - sy == 2 && firstMove)
+                                return true;
+                            if (f._team == 1 && sy - fy == 1 || sy - fy == 2 && firstMove)
+                                return true;
+                            return false;
+                        }
+                        else if(Math.Abs(sx - fx) == 1 && s._type != TypeFigure.EmptyCell && s._team != f._team)
+                        {
+                            if (f._team == 0 && fy - sy == 1)
+                                return true;
+                            if (f._team == 1 && sy - fy == 1)
+                                return true;
+                            return false;
+                        }
+                        else
+                        {
+                            return false;
+                        }
                     case TypeFigure.Knight:
 
                         if (Math.Abs(fx - sx) == 2 && Math.Abs(fy - sy) == 1 ||
