@@ -93,6 +93,75 @@ namespace Chess
             f.ConvertTo(TypeFigure.EmptyCell);
 
         }
+        public List<Point> FindPossibleMoves(Figure f)
+        {
+            List<Point> possibleMoves = new List<Point>();
+            Point p = f.GetPos();
+            switch (f._type)
+            {
+                case TypeFigure.Pawn:
+                    break;
+                case TypeFigure.Knight:
+                    break;
+                case TypeFigure.Bishop:
+                    break;
+                case TypeFigure.Rook:
+                    for (int i = p.Y + 1; i < 8; i++)
+                    {
+                        if(this[p.X, i]._team == 2)
+                        {
+                            possibleMoves.Add(new Point(p.X, i));
+                            continue;
+                        }
+                        if (f._team != this[p.X,i]._team)
+                            possibleMoves.Add(new Point(p.X, i));
+                        break;
+                    }
+                    for (int i = p.Y - 1; i >= 0; i--)
+                    {
+                        if (this[p.X, i]._team == 2)
+                        {
+                            possibleMoves.Add(new Point(p.X, i));
+                            continue;
+                        }
+                        if (f._team != this[p.X, i]._team)
+                            possibleMoves.Add(new Point(p.X, i));
+                        break;
+                    }
+                    for (int i = p.X + 1; i < 8; i++)
+                    {
+                        if (this[i, p.Y]._team == 2)
+                        {
+                            possibleMoves.Add(new Point(i, p.Y));
+                            continue;
+                        }
+                        if (f._team != this[i, p.Y]._team)
+                            possibleMoves.Add(new Point(i, p.Y));
+                        break;
+                    }
+                    for (int i = p.X - 1; i >= 0; i--)
+                    {
+                        if (this[i, p.Y]._team == 2)
+                        {
+                            possibleMoves.Add(new Point(i, p.Y));
+                            continue;
+                        }
+                        if (f._team != this[i, p.Y]._team)
+                            possibleMoves.Add(new Point(i, p.Y));
+                        break;
+                    }
+                    break;
+                case TypeFigure.Queen:
+                    break;
+                case TypeFigure.King:
+                    break;
+                case TypeFigure.EmptyCell:
+                    break;
+                default:
+                    break;
+            }
+            return possibleMoves;
+        }
         public bool IsCorrectMove(Figure f, Figure s)
         {
             if (f._team != s._team)
@@ -113,7 +182,7 @@ namespace Chess
                                 return true;
                             return false;
                         }
-                        else if(Math.Abs(sx - fx) == 1 && s._type != TypeFigure.EmptyCell && s._team != f._team)
+                        else if (Math.Abs(sx - fx) == 1 && s._type != TypeFigure.EmptyCell && s._team != f._team)
                         {
                             if (f._team == 0 && fy - sy == 1)
                                 return true;
@@ -128,7 +197,7 @@ namespace Chess
                     case TypeFigure.Knight:
 
                         if (Math.Abs(fx - sx) == 2 && Math.Abs(fy - sy) == 1 ||
-                            Math.Abs(fx - sx) == 1 && Math.Abs(fy - sy) == 2 )
+                            Math.Abs(fx - sx) == 1 && Math.Abs(fy - sy) == 2)
                         {
                             return true;
                         }
@@ -140,6 +209,11 @@ namespace Chess
                     case TypeFigure.Bishop:
                         return false;
                     case TypeFigure.Rook:
+                        List<Point> moves = FindPossibleMoves(f);
+                        if (moves.Contains(s.GetPos()))
+                        {
+                            return true;
+                        }
                         return false;
                     case TypeFigure.Queen:
                         return false;
@@ -150,15 +224,15 @@ namespace Chess
             return false;
         }
         
-        public Figure this[int y, int x]
+        public Figure this[int x, int y]
         {
             get
             {
-                return _board[y, x];
+                return _board[x, y];
             }
             set
             {
-                _board[y, x] = value;
+                _board[x, y] = value;
             }
         }
 
