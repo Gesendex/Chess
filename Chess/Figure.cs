@@ -71,7 +71,7 @@ namespace Chess
             this._team = f._team;
             this._type = f._type;
             this._position = f._position;
-            this._picture = this._picture = GetPictureOrNullForEmptyCell(this._type, this._team);
+            this._picture = GetPictureOrNullForEmptyCell(this._type, this._team);
         }
         public Point GetPos()
         {

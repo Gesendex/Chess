@@ -251,6 +251,17 @@ namespace Chess
                     possibleMoves = possibleMoves.Concat(FindPossibleMovesInDirection(f, Direction.right));
                     break;
                 case TypeFigure.King:
+                    List<Point> temp = new List<Point>();
+                    for (int i = p.X - 1; i < p.X + 2; i++)
+                    {
+                        for (int j = p.Y - 1; j < p.Y + 2; j++)
+                        {
+                            if ((i == p.Y && j == p.X) || (i < 0 || i > 7) || (j < 0 || j > 7) ||this[i,j]._team == f._team)
+                                continue;
+                            temp.Add(new Point(i, j));
+                        }
+                    }
+                    possibleMoves = temp;
                     break;
                 case TypeFigure.EmptyCell:
                     break;
@@ -261,7 +272,7 @@ namespace Chess
         }
         public bool IsCorrectMove(Figure f, Figure s)
         {
-            if (f._team != s._team || f._type != TypeFigure.EmptyCell)
+            if (f._team != s._team && f._type != TypeFigure.EmptyCell)
             {
                 int fx = f.GetPos().X,
                     fy = f.GetPos().Y,
@@ -302,8 +313,6 @@ namespace Chess
                         {
                             return false;
                         }
-                    case TypeFigure.King:
-                        return false;
                 }
                 moves = FindPossibleMoves(f);
                 if (moves.Contains(s.GetPos()))
