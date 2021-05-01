@@ -12,6 +12,7 @@ namespace Chess
 {
     public class ChessBoard
     {
+        public byte turn = 0;
         private enum Direction
         {
             down,
@@ -103,9 +104,9 @@ namespace Chess
                 s.ConvertTo(TypeFigure.Queen, s._team);
             }
             f.ConvertTo(TypeFigure.EmptyCell);
-
+            
         }
-        private List<Point> FindPossibleMovesInDirection(Figure f, Direction direction)
+        private List<Point> FindPossibleMovesInDirection(Figure f, Direction direction, Figure[,] mas)
         {
             List<Point> possibleMoves = new List<Point>();
             Point p = f.GetPos();
@@ -114,12 +115,12 @@ namespace Chess
                 case Direction.down:
                     for (int i = p.Y + 1; i < 8; i++)
                     {
-                        if (this[p.X, i]._team == 2)
+                        if (mas[p.X, i]._team == 2)
                         {
                             possibleMoves.Add(new Point(p.X, i));
                             continue;
                         }
-                        if (f._team != this[p.X, i]._team)
+                        if (f._team != mas[p.X, i]._team)
                             possibleMoves.Add(new Point(p.X, i));
                         break;
                     }
@@ -127,12 +128,12 @@ namespace Chess
                 case Direction.up:
                     for (int i = p.Y - 1; i >= 0; i--)
                     {
-                        if (this[p.X, i]._team == 2)
+                        if (mas[p.X, i]._team == 2)
                         {
                             possibleMoves.Add(new Point(p.X, i));
                             continue;
                         }
-                        if (f._team != this[p.X, i]._team)
+                        if (f._team != mas[p.X, i]._team)
                             possibleMoves.Add(new Point(p.X, i));
                         break;
                     }
@@ -140,12 +141,12 @@ namespace Chess
                 case Direction.right:
                     for (int i = p.X + 1; i < 8; i++)
                     {
-                        if (this[i, p.Y]._team == 2)
+                        if (mas[i, p.Y]._team == 2)
                         {
                             possibleMoves.Add(new Point(i, p.Y));
                             continue;
                         }
-                        if (f._team != this[i, p.Y]._team)
+                        if (f._team != mas[i, p.Y]._team)
                             possibleMoves.Add(new Point(i, p.Y));
                         break;
                     }
@@ -153,12 +154,12 @@ namespace Chess
                 case Direction.left:
                     for (int i = p.X - 1; i >= 0; i--)
                     {
-                        if (this[i, p.Y]._team == 2)
+                        if (mas[i, p.Y]._team == 2)
                         {
                             possibleMoves.Add(new Point(i, p.Y));
                             continue;
                         }
-                        if (f._team != this[i, p.Y]._team)
+                        if (f._team != mas[i, p.Y]._team)
                             possibleMoves.Add(new Point(i, p.Y));
                         break;
                     }
@@ -166,12 +167,12 @@ namespace Chess
                 case Direction.downRight:
                     for (int i = p.X + 1, j = p.Y + 1; i < 8 && j < 8; i++, j++)
                     {
-                        if (this[i, j]._team == 2)
+                        if (mas[i, j]._team == 2)
                         {
                             possibleMoves.Add(new Point(i, j));
                             continue;
                         }
-                        if (f._team != this[i, j]._team)
+                        if (f._team != mas[i, j]._team)
                             possibleMoves.Add(new Point(i, j));
                         break;
                     }
@@ -179,12 +180,12 @@ namespace Chess
                 case Direction.upLeft:
                     for (int i = p.X - 1, j = p.Y - 1; i >= 0 && j >= 0; i--, j--)
                     {
-                        if (this[i, j]._team == 2)
+                        if (mas[i, j]._team == 2)
                         {
                             possibleMoves.Add(new Point(i, j));
                             continue;
                         }
-                        if (f._team != this[i, j]._team)
+                        if (f._team != mas[i, j]._team)
                             possibleMoves.Add(new Point(i, j));
                         break;
                     }
@@ -192,12 +193,12 @@ namespace Chess
                 case Direction.downLeft:
                     for (int i = p.X - 1, j = p.Y + 1; i >= 0 && j < 8; i--, j++)
                     {
-                        if (this[i, j]._team == 2)
+                        if (mas[i, j]._team == 2)
                         {
                             possibleMoves.Add(new Point(i, j));
                             continue;
                         }
-                        if (f._team != this[i, j]._team)
+                        if (f._team != mas[i, j]._team)
                             possibleMoves.Add(new Point(i, j));
                         break;
                     }
@@ -205,12 +206,12 @@ namespace Chess
                 case Direction.upRight:
                     for (int i = p.X + 1, j = p.Y - 1; i < 8 && j >= 0; i++, j--)
                     {
-                        if (this[i, j]._team == 2)
+                        if (mas[i, j]._team == 2)
                         {
                             possibleMoves.Add(new Point(i, j));
                             continue;
                         }
-                        if (f._team != this[i, j]._team)
+                        if (f._team != mas[i, j]._team)
                             possibleMoves.Add(new Point(i, j));
                         break;
                     }
@@ -218,110 +219,124 @@ namespace Chess
             }
             return possibleMoves;
         }
-        public List<Point> FindPossibleMoves(Figure f)
+        public List<Point> FindPossibleMoves(Figure f , Figure[,] mas)
         {
-            IEnumerable<Point> possibleMoves = new List<Point>(); ;
+            List<Point> temp = new List<Point>();
+            IEnumerable<Point> possibleMoves = new List<Point>();
             Point p = f.GetPos();
             switch (f._type)
             {
                 case TypeFigure.Pawn:
+                    int mult = f._team == 0 ? -1 : 1;
+                    if (mult + p.Y >= 0 && mult + p.Y < 8 && mas[p.X, mult + p.Y]._type == TypeFigure.EmptyCell)
+                    {
+                        temp.Add(new Point(p.X, mult + p.Y));
+                        if (mas[p.X, mult * 2 + p.Y]._type == TypeFigure.EmptyCell && f._moveCounter == 0)
+                            temp.Add(new Point(p.X, mult * 2 + p.Y));
+                    }
+                    for (int i = p.X - 1; i <= p.X + 1; i+=2)
+                    {
+                        if (i >= 0 && i < 8 && mas[i, mult + p.Y]._team < 2)
+                            temp.Add(new Point(i, mult + p.Y));
+                    }
+
+                    possibleMoves = temp;
                     break;
                 case TypeFigure.Knight:
+                    for (int i = -2; i <= 2; i += 4)
+                    {
+                        for (int j = -1; j <= 1; j += 2)
+                        {
+                            if (p.X + i >= 0 && p.X + i < 8 && p.Y + j >= 0 && p.Y + j < 8 &&
+                                mas[p.X + i, p.Y + j]._team != f._team)
+                                temp.Add(new Point(p.X + i, p.Y + j));
+                            if (p.X + j >= 0 && p.X + j < 8 && p.Y + i >= 0 && p.Y + i < 8 &&
+                                mas[p.X + j, p.Y + i]._team != f._team)
+                                temp.Add(new Point(p.X + j, p.Y + i));
+                        }
+                    }
+                    possibleMoves = temp;
                     break;
                 case TypeFigure.Bishop:
-                    possibleMoves = possibleMoves.Concat(FindPossibleMovesInDirection(f, Direction.downRight));
-                    possibleMoves = possibleMoves.Concat(FindPossibleMovesInDirection(f, Direction.downLeft));
-                    possibleMoves = possibleMoves.Concat(FindPossibleMovesInDirection(f, Direction.upRight));
-                    possibleMoves = possibleMoves.Concat(FindPossibleMovesInDirection(f, Direction.upLeft));
+                    for (int i = 4; i < 8; i++)
+                        possibleMoves = possibleMoves.Concat(FindPossibleMovesInDirection(f, (Direction)i, mas));
                     break;
                 case TypeFigure.Rook:
-                    possibleMoves = possibleMoves.Concat(FindPossibleMovesInDirection(f, Direction.down));
-                    possibleMoves = possibleMoves.Concat(FindPossibleMovesInDirection(f, Direction.up));
-                    possibleMoves = possibleMoves.Concat(FindPossibleMovesInDirection(f, Direction.left));
-                    possibleMoves = possibleMoves.Concat(FindPossibleMovesInDirection(f, Direction.right));
+                    for (int i = 0; i < 4; i++)
+                        possibleMoves = possibleMoves.Concat(FindPossibleMovesInDirection(f, (Direction)i, mas));
                     break;
                 case TypeFigure.Queen:
-                    possibleMoves = possibleMoves.Concat(FindPossibleMovesInDirection(f, Direction.downRight));
-                    possibleMoves = possibleMoves.Concat(FindPossibleMovesInDirection(f, Direction.downLeft));
-                    possibleMoves = possibleMoves.Concat(FindPossibleMovesInDirection(f, Direction.upRight));
-                    possibleMoves = possibleMoves.Concat(FindPossibleMovesInDirection(f, Direction.upLeft));
-                    possibleMoves = possibleMoves.Concat(FindPossibleMovesInDirection(f, Direction.down));
-                    possibleMoves = possibleMoves.Concat(FindPossibleMovesInDirection(f, Direction.up));
-                    possibleMoves = possibleMoves.Concat(FindPossibleMovesInDirection(f, Direction.left));
-                    possibleMoves = possibleMoves.Concat(FindPossibleMovesInDirection(f, Direction.right));
+                    for (int i = 0; i < 8; i++)
+                        possibleMoves = possibleMoves.Concat(FindPossibleMovesInDirection(f, (Direction)i, mas));
                     break;
                 case TypeFigure.King:
-                    List<Point> temp = new List<Point>();
+
                     for (int i = p.X - 1; i < p.X + 2; i++)
                     {
                         for (int j = p.Y - 1; j < p.Y + 2; j++)
                         {
-                            if ((i == p.Y && j == p.X) || (i < 0 || i > 7) || (j < 0 || j > 7) ||this[i,j]._team == f._team)
+                            if ((i == p.Y && j == p.X) || (i < 0 || i > 7) || (j < 0 || j > 7) || this[i, j]._team == f._team)
                                 continue;
                             temp.Add(new Point(i, j));
                         }
                     }
                     possibleMoves = temp;
                     break;
-                case TypeFigure.EmptyCell:
-                    break;
-                default:
-                    break;
             }
             return possibleMoves.ToList();
         }
+        private void Copy(Figure[,] a, Figure[,] b)
+        {
+            for (int i = 0; i < a.Length / a.GetLength(0); i++)
+            {
+                for (int j = 0; j < a.GetLength(0); j++)
+                {
+                    b[i, j] = new Figure(a[i, j]);
+                }
+            }
+        }
+        private bool NotСheck(Figure f, Figure s)
+        {
+            Figure[,] clone = new Figure[8,8];
+            Copy(_board, clone);
+            int fx = f.GetPos().X,
+                fy = f.GetPos().Y,
+                sx = s.GetPos().X,
+                sy = s.GetPos().Y;
+            Point kingPos = new Point(-1,-1);
+            Attack(clone[fx, fy], clone[sx, sy]);
+            foreach (Figure item in clone)
+            {
+                if (item._team == turn && item._type == TypeFigure.King)
+                    kingPos = item.GetPos();
+            }
+            foreach (Figure item in clone)
+            {
+                if (item._type == TypeFigure.EmptyCell || item._team == turn)
+                    continue;
+                List<Point> posMoves = FindPossibleMoves(item, clone);
+                if (posMoves.Contains(kingPos))
+                    return false;
+            }
+            return true;
+        }
+
         public bool IsCorrectMove(Figure f, Figure s)
         {
-            if (f._team != s._team && f._type != TypeFigure.EmptyCell)
+
+            if (f._team != s._team && f._type != TypeFigure.EmptyCell && f._team == turn)
             {
-                int fx = f.GetPos().X,
-                    fy = f.GetPos().Y,
-                    sx = s.GetPos().X,
-                    sy = s.GetPos().Y;
-                List<Point> moves;
-                switch (f._type)
-                {
-                    case TypeFigure.Pawn:
-                        if (sx == fx && s._type == TypeFigure.EmptyCell)
-                        {
-                            bool firstMove = (f._moveCounter == 0);
-                            if (f._team == 0 && fy - sy == 1 || fy - sy == 2 && firstMove)
-                                return true;
-                            if (f._team == 1 && sy - fy == 1 || sy - fy == 2 && firstMove)
-                                return true;
-                            return false;
-                        }
-                        else if (Math.Abs(sx - fx) == 1 && s._type != TypeFigure.EmptyCell && s._team != f._team)
-                        {
-                            if (f._team == 0 && fy - sy == 1)
-                                return true;
-                            if (f._team == 1 && sy - fy == 1)
-                                return true;
-                            return false;
-                        }
-                        else
-                        {
-                            return false;
-                        }
-                    case TypeFigure.Knight:
-                        if (Math.Abs(fx - sx) == 2 && Math.Abs(fy - sy) == 1 ||
-                            Math.Abs(fx - sx) == 1 && Math.Abs(fy - sy) == 2)
-                        {
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
-                }
-                moves = FindPossibleMoves(f);
+                List<Point> moves = FindPossibleMoves(f, _board);
                 if (moves.Contains(s.GetPos()))
                 {
-                    return true;
+                    if (NotСheck(f, s))
+                    {
+                        turn = (byte)(turn == 0 ? 1 : 0);
+                        return true;
+                    }
                 }
-                return false;
             }
-            return false;
+                return false;
         }
 
         public Figure this[int x, int y]

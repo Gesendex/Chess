@@ -35,12 +35,11 @@ namespace Chess
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            this.Refresh();
+            this.Invalidate();
         }
 
         private void Chess_MouseDown(object sender, MouseEventArgs e)
         {
-
             int cellX = (int)(Math.Floor((e.X - _boardX) / (double)80));
             int cellY = (int)(Math.Floor((e.Y - _boardY) / (double)80));
             if ((cellX >= 0 && cellX <= 8) && (cellY >= 0 && cellY <= 8))
@@ -70,12 +69,13 @@ namespace Chess
                 label3.Text =  "  _clickFigureDownY = " + _clickDownY.ToString() +" _clickFigureDownX = " + _clickDownX.ToString();
                 label3.Text += "\n_clickFigureUpY = " + _clickUpY.ToString() + " _clickFigureUpX = " + _clickUpX.ToString();
                 label2.Text = cellX.ToString() + " " + cellY.ToString();
+                
 
                 if (_board.IsCorrectMove(_board[_clickDownX,_clickDownY], _board[_clickUpX, _clickUpY]))
                 {
                     _board.Attack(_board[_clickDownX, _clickDownY], _board[_clickUpX, _clickUpY]);
                 }
-
+                label4.Text = _board.turn == 0?"Белые": "Черные";
             }
             _inDrag = false;
         }
