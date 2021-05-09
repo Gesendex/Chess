@@ -10,9 +10,10 @@ using System.Windows.Forms;
 
 namespace Chess
 {
+    
     public class ChessBoard
     {
-        public byte turn = 0;
+        public byte turn { get; private set; } = 0;
         private enum Direction
         {
             down,
@@ -92,19 +93,50 @@ namespace Chess
             }
 
         }
-
-        public void Attack(Figure f, Figure s)
+        private void Сastling(Figure f, Figure s)
         {
-            s._type = f._type;
-            s._team = f._team;
-            s._picture = f._picture;
-            s._moveCounter = f._moveCounter + 1;
-            if (s._type == TypeFigure.Pawn && (s.GetPos().Y == 7 || s.GetPos().Y == 0))
+            if (f.GetPos().X > s.GetPos().X)
             {
-                s.ConvertTo(TypeFigure.Queen, s._team);
+                Attack(f,_board[f.GetPos().X - 2,f.GetPos().Y]);
+                Attack(s, _board[f.GetPos().X - 1, s.GetPos().Y]);
             }
-            f.ConvertTo(TypeFigure.EmptyCell);
+            else
+            {
+                Attack(f, _board[f.GetPos().X + 2, f.GetPos().Y]);
+                Attack(s, _board[f.GetPos().X + 1, s.GetPos().Y]);
+            }
+
+            /*f.ConvertTo(TypeFigure.Rook, f._team);
+            s.ConvertTo(TypeFigure.King, s._team);
+            f._moveCounter++;
+            s._moveCounter++;*/
+        }
+        private void Attack(Figure f, Figure s)
+        {
             
+                s._type = f._type;
+                s._team = f._team;
+                s._picture = f._picture;
+                s._moveCounter = f._moveCounter + 1;
+                if (s._type == TypeFigure.Pawn && (s.GetPos().Y == 7 || s.GetPos().Y == 0))
+                {
+                    s.ConvertTo(TypeFigure.Queen, s._team);
+                }
+                f.ConvertTo(TypeFigure.EmptyCell);
+        }
+
+        public void MakeAMove(int fX, int fY, int sX, int sY)
+        {
+            Figure f = _board[fX, fY];
+            Figure s = _board[sX, sY];
+            if (s._team == f._team)
+            {
+                Сastling(f, s);
+            }
+            else
+            {
+                Attack(f, s);
+            }
         }
         private List<Point> FindPossibleMovesInDirection(Figure f, Direction direction, Figure[,] mas)
         {
@@ -236,7 +268,7 @@ namespace Chess
                     }
                     for (int i = p.X - 1; i <= p.X + 1; i+=2)
                     {
-                        if (i >= 0 && i < 8 && mas[i, mult + p.Y]._team < 2)
+                        if (i >= 0 && i < 8 && mas[i, mult + p.Y]._team < 2 && mas[i, mult + p.Y]._team != f._team)
                             temp.Add(new Point(i, mult + p.Y));
                     }
 
@@ -320,23 +352,51 @@ namespace Chess
             }
             return true;
         }
-
-        public bool IsCorrectMove(Figure f, Figure s)
+        private bool СastlingCheck(Figure rook)
         {
-
-            if (f._team != s._team && f._type != TypeFigure.EmptyCell && f._team == turn)
+            if (rook.GetPos().X == 7)
             {
-                List<Point> moves = FindPossibleMoves(f, _board);
-                if (moves.Contains(s.GetPos()))
+                for (int i = 6; _board[i, rook.GetPos().Y]._type != TypeFigure.King; i--)
                 {
-                    if (NotСheck(f, s))
+                    if (_board[i, rook.GetPos().Y]._type != TypeFigure.EmptyCell)
                     {
-                        turn = (byte)(turn == 0 ? 1 : 0);
-                        return true;
+                        return false;
                     }
                 }
             }
-                return false;
+            else
+            {
+                for (int i = 1; _board[i, rook.GetPos().Y]._type != TypeFigure.King; i++)
+                {
+                    if (_board[i, rook.GetPos().Y]._type != TypeFigure.EmptyCell)
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+        public bool IsCorrectMove(int fX, int fY, int sX, int sY)
+        {
+            Figure f = _board[fX, fY]; 
+            Figure s = _board[sX, sY];
+            if (f._type != TypeFigure.EmptyCell && f._team == turn)
+            {
+                List<Point> moves = FindPossibleMoves(f, _board);
+                if (moves.Contains(s.GetPos()) && NotСheck(f, s))
+                {
+                    turn = (byte)(turn == 0 ? 1 : 0);
+                    return true;
+                }
+                if (f._type == TypeFigure.King && s._type == TypeFigure.Rook &&
+                    f._moveCounter == 0 && s._moveCounter == 0 && NotСheck(f, s) && СastlingCheck(s))
+                {
+                    turn = (byte)(turn == 0 ? 1 : 0);
+                    return true;
+                }
+            }
+            return false;
         }
 
         public Figure this[int x, int y]

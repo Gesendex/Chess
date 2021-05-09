@@ -51,13 +51,7 @@ namespace Chess
             }
 
         }
-        public static void Swap<T>(ref T lhs, ref T rhs)
-        {
-            T temp;
-            temp = lhs;
-            lhs = rhs;
-            rhs = temp;
-        }
+        
         private void Chess_MouseUp(object sender, MouseEventArgs e)
         {
             int cellX = (int)(Math.Floor((e.X - _boardX) / (double)80));
@@ -66,14 +60,14 @@ namespace Chess
             {
                 _clickUpX = cellX;
                 _clickUpY = cellY;
-                label3.Text =  "  _clickFigureDownY = " + _clickDownY.ToString() +" _clickFigureDownX = " + _clickDownX.ToString();
-                label3.Text += "\n_clickFigureUpY = " + _clickUpY.ToString() + " _clickFigureUpX = " + _clickUpX.ToString();
+                label3.Text =  "  _clickDownY = " + _clickDownY.ToString() +" _clickDownX = " + _clickDownX.ToString();
+                label3.Text += "\n_clickUpY = " + _clickUpY.ToString() + " _clickUpX = " + _clickUpX.ToString();
                 label2.Text = cellX.ToString() + " " + cellY.ToString();
                 
 
-                if (_board.IsCorrectMove(_board[_clickDownX,_clickDownY], _board[_clickUpX, _clickUpY]))
+                if (_board.IsCorrectMove(_clickDownX,_clickDownY, _clickUpX, _clickUpY))
                 {
-                    _board.Attack(_board[_clickDownX, _clickDownY], _board[_clickUpX, _clickUpY]);
+                    _board.MakeAMove(_clickDownX, _clickDownY, _clickUpX, _clickUpY);
                 }
                 label4.Text = _board.turn == 0?"Белые": "Черные";
             }

@@ -77,10 +77,6 @@ namespace Chess
         {
             return _position;
         }
-        public void SetPos(Point p)
-        {
-            _position = p;
-        }
         private Bitmap GetPictureOrNullForEmptyCell(TypeFigure type, byte team)
         {
             Image im;
