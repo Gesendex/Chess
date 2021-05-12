@@ -62,9 +62,7 @@ namespace Chess
         /// <param name="type">Тип фигуры.</param>
         /// <param name="x">Позиция фигуры по координате x.</param>
         /// <param name="y">Позиция фигуры по координате y.</param>
-        public Figure(byte team, TypeFigure type, int x, int y) : this(team, type, new Point(x, y))
-        {
-        }
+        public Figure(byte team, TypeFigure type, int x, int y) : this(team, type, new Point(x, y)) { }
 
         public Figure(Figure f)
         {
@@ -105,7 +103,6 @@ namespace Chess
                     im = null;
                     break;
             }
-
             return im == null ? null: new Bitmap(im, 80, 80);
         }
         

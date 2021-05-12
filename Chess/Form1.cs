@@ -23,6 +23,7 @@ namespace Chess
         private int _clickUpX;
         private int _clickUpY;
         SoundPlayer soundPlayer = new SoundPlayer();
+
         public Chess()
         {
             InitializeComponent();
@@ -40,7 +41,7 @@ namespace Chess
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            this.Invalidate();
+            
         }
 
         private void Chess_MouseDown(object sender, MouseEventArgs e)
@@ -52,6 +53,7 @@ namespace Chess
                 _inDrag = true;
                 _clickDownX = cellX;
                 _clickDownY = cellY;
+                _board.MarkPosibleMoves(_clickDownX, _clickDownY, this.CreateGraphics());
                 //label1.Text = cellX.ToString() + " " + cellY.ToString();
             }
 
@@ -73,10 +75,10 @@ namespace Chess
                 if (_board.IsCorrectMove(_clickDownX,_clickDownY, _clickUpX, _clickUpY))
                 {
                     _board.MakeAMove(_clickDownX, _clickDownY, _clickUpX, _clickUpY);
-                    
                 }
             }
             _inDrag = false;
+            this.Invalidate();
         }
     }
 }

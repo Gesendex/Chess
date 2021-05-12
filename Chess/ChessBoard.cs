@@ -13,7 +13,7 @@ namespace Chess
     
     public class ChessBoard
     {
-        public byte turn { get; private set; } = 0;
+        
         private enum Direction
         {
             down,
@@ -25,7 +25,7 @@ namespace Chess
             downLeft,
             upRight
         }
-
+        public byte turn { get; private set; } = 0;
         private Figure[,] _board;
         private int _x;
         private int _y;
@@ -92,6 +92,17 @@ namespace Chess
                 }
             }
 
+        }
+        public void MarkPosibleMoves(int x, int y, Graphics gr)
+        {
+            if (this[x, y]._team != turn)
+                return;
+            List<Point> posMoves = FindPossibleMoves(this[x, y], _board);
+            foreach (Point item in posMoves)
+            {
+                SolidBrush mark = new SolidBrush(Color.FromArgb(127,255,255,255));
+                gr.FillRectangle(mark, item.X * 80 + _x, item.Y * 80 + _y, 80, 80);
+            }
         }
         private void Сastling(Figure king, bool isShortCastling)
         {
@@ -320,7 +331,7 @@ namespace Chess
             }
             return possibleMoves.ToList();
         }
-
+        
         private void Copy(Figure[,] a, Figure[,] b)
         {
             for (int i = 0; i < a.Length / a.GetLength(0); i++)
@@ -375,7 +386,7 @@ namespace Chess
                     {
                         if (item._type == TypeFigure.EmptyCell || item._team == turn)
                             continue;
-                        List<Point> posMoves = FindPossibleMoves(item, _board);
+                        List<Point> posMoves = FindPossibleMoves(item, _board, true);
                         if (posMoves.Contains(posToCheck))
                             return false;
                     }
