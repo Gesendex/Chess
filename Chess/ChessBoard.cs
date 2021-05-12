@@ -1,16 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace Chess
 {
-    
+
     public class ChessBoard
     {
         
@@ -39,6 +34,7 @@ namespace Chess
         }
         public void ToStartPos()
         {
+            turn = 0;
             for (int i = 0; i < 8; i++)
             {
                 this[i, 1] = new Figure(1, TypeFigure.Pawn, i, 1);
@@ -97,12 +93,34 @@ namespace Chess
         {
             if (this[x, y]._team != turn)
                 return;
+
             List<Point> posMoves = FindPossibleMoves(this[x, y], _board);
-            foreach (Point item in posMoves)
+
+            if (this[x, y]._type == TypeFigure.King)
+                foreach (Figure item in _board)
+                {
+                    if (posMoves.Count == 0)
+                        break;
+                    if (item._type == TypeFigure.EmptyCell || item._team == turn)
+                        continue;
+                    List<Point> buff = FindPossibleMoves(item, _board, true);
+                    foreach (Point pos in buff)
+                        posMoves.Remove(pos);
+                }
+
+            for (int i = 0; i < posMoves.Count; )
             {
-                SolidBrush mark = new SolidBrush(Color.FromArgb(127,255,255,255));
-                gr.FillRectangle(mark, item.X * 80 + _x, item.Y * 80 + _y, 80, 80);
+                if (!NotСheckAfterMove(this[x, y], this[posMoves[i].X, posMoves[i].Y]))
+                {
+                    posMoves.Remove(posMoves[i]);
+                    continue;
+                }
+                i++;
             }
+                
+            SolidBrush mark = new SolidBrush(Color.FromArgb(127, 255, 255, 255));
+            foreach (Point item in posMoves)
+                gr.FillRectangle(mark, item.X * 80 + _x, item.Y * 80 + _y, 80, 80);
         }
         private void Сastling(Figure king, bool isShortCastling)
         {
