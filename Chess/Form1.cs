@@ -3,13 +3,16 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
+using System.Media;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Chess
 {
+
     public partial class Chess : Form
     {
         private bool _inDrag = false;
@@ -19,12 +22,14 @@ namespace Chess
         private int _clickDownY;
         private int _clickUpX;
         private int _clickUpY;
+        SoundPlayer soundPlayer = new SoundPlayer();
         public Chess()
         {
             InitializeComponent();
             SetStyle(ControlStyles.DoubleBuffer | ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
             this.UpdateStyles();
             _board = new ChessBoard(90, 90);
+            //soundPlayer.s
         }
 
         private void Chess_Paint(object sender, PaintEventArgs e)
@@ -47,7 +52,7 @@ namespace Chess
                 _inDrag = true;
                 _clickDownX = cellX;
                 _clickDownY = cellY;
-                label1.Text = cellX.ToString() + " " + cellY.ToString();
+                //label1.Text = cellX.ToString() + " " + cellY.ToString();
             }
 
         }
@@ -60,16 +65,16 @@ namespace Chess
             {
                 _clickUpX = cellX;
                 _clickUpY = cellY;
-                label3.Text =  "  _clickDownY = " + _clickDownY.ToString() +" _clickDownX = " + _clickDownX.ToString();
-                label3.Text += "\n_clickUpY = " + _clickUpY.ToString() + " _clickUpX = " + _clickUpX.ToString();
-                label2.Text = cellX.ToString() + " " + cellY.ToString();
+                //label3.Text =  "  _clickDownY = " + _clickDownY.ToString() +" _clickDownX = " + _clickDownX.ToString();
+                //label3.Text += "\n_clickUpY = " + _clickUpY.ToString() + " _clickUpX = " + _clickUpX.ToString();
+                //label2.Text = cellX.ToString() + " " + cellY.ToString();
                 
 
                 if (_board.IsCorrectMove(_clickDownX,_clickDownY, _clickUpX, _clickUpY))
                 {
                     _board.MakeAMove(_clickDownX, _clickDownY, _clickUpX, _clickUpY);
+                    
                 }
-                label4.Text = _board.turn == 0?"Белые": "Черные";
             }
             _inDrag = false;
         }

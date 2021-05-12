@@ -93,27 +93,22 @@ namespace Chess
             }
 
         }
-        private void Сastling(Figure f, Figure s)
+        private void Сastling(Figure king, bool isShortCastling)
         {
-            if (f.GetPos().X > s.GetPos().X)
+            if (isShortCastling)
             {
-                Attack(f,_board[f.GetPos().X - 2,f.GetPos().Y]);
-                Attack(s, _board[f.GetPos().X - 1, s.GetPos().Y]);
+                Attack(king, _board[king.GetPos().X + 2, king.GetPos().Y]);
+                Attack(_board[7, king.GetPos().Y], _board[king.GetPos().X + 1, king.GetPos().Y]);
             }
             else
             {
-                Attack(f, _board[f.GetPos().X + 2, f.GetPos().Y]);
-                Attack(s, _board[f.GetPos().X + 1, s.GetPos().Y]);
+                Attack(king, _board[king.GetPos().X - 2, king.GetPos().Y]);
+                Attack(_board[0, king.GetPos().Y], _board[king.GetPos().X - 1, king.GetPos().Y]);
             }
 
-            /*f.ConvertTo(TypeFigure.Rook, f._team);
-            s.ConvertTo(TypeFigure.King, s._team);
-            f._moveCounter++;
-            s._moveCounter++;*/
         }
         private void Attack(Figure f, Figure s)
         {
-            
                 s._type = f._type;
                 s._team = f._team;
                 s._picture = f._picture;
@@ -124,17 +119,20 @@ namespace Chess
                 }
                 f.ConvertTo(TypeFigure.EmptyCell);
         }
-
         public void MakeAMove(int fX, int fY, int sX, int sY)
         {
             Figure f = _board[fX, fY];
-            Figure s = _board[sX, sY];
-            if (s._team == f._team)
+            
+            if (f._type == TypeFigure.King && fY == sY && Math.Abs(fX - sX) == 2)
             {
-                Сastling(f, s);
+                if (sX > fX)
+                    Сastling(f, true);
+                else
+                    Сastling(f, false);
             }
             else
             {
+                Figure s = _board[sX, sY];
                 Attack(f, s);
             }
         }
@@ -251,7 +249,7 @@ namespace Chess
             }
             return possibleMoves;
         }
-        public List<Point> FindPossibleMoves(Figure f , Figure[,] mas)
+        public List<Point> FindPossibleMoves(Figure f, Figure[,] mas, bool ignorCastling = false)
         {
             List<Point> temp = new List<Point>();
             IEnumerable<Point> possibleMoves = new List<Point>();
@@ -266,7 +264,7 @@ namespace Chess
                         if (mas[p.X, mult * 2 + p.Y]._type == TypeFigure.EmptyCell && f._moveCounter == 0)
                             temp.Add(new Point(p.X, mult * 2 + p.Y));
                     }
-                    for (int i = p.X - 1; i <= p.X + 1; i+=2)
+                    for (int i = p.X - 1; i <= p.X + 1; i += 2)
                     {
                         if (i >= 0 && i < 8 && mas[i, mult + p.Y]._team < 2 && mas[i, mult + p.Y]._team != f._team)
                             temp.Add(new Point(i, mult + p.Y));
@@ -312,11 +310,17 @@ namespace Chess
                             temp.Add(new Point(i, j));
                         }
                     }
+                    if (f._moveCounter == 0 && !ignorCastling)
+                    {
+                        if (СastlingCheck(this[0, p.Y])) temp.Add(new Point(p.X - 2, p.Y));
+                        if (СastlingCheck(this[7, p.Y])) temp.Add(new Point(p.X + 2, p.Y));
+                    }
                     possibleMoves = temp;
                     break;
             }
             return possibleMoves.ToList();
         }
+
         private void Copy(Figure[,] a, Figure[,] b)
         {
             for (int i = 0; i < a.Length / a.GetLength(0); i++)
@@ -327,7 +331,7 @@ namespace Chess
                 }
             }
         }
-        private bool NotСheck(Figure f, Figure s)
+        private bool NotСheckAfterMove(Figure f, Figure s)
         {
             Figure[,] clone = new Figure[8,8];
             Copy(_board, clone);
@@ -346,7 +350,7 @@ namespace Chess
             {
                 if (item._type == TypeFigure.EmptyCell || item._team == turn)
                     continue;
-                List<Point> posMoves = FindPossibleMoves(item, clone);
+                List<Point> posMoves = FindPossibleMoves(item, clone, true);
                 if (posMoves.Contains(kingPos))
                     return false;
             }
@@ -363,6 +367,19 @@ namespace Chess
                         return false;
                     }
                 }
+                for (int i = 4; i < 8; i++)
+                {
+                    Point posToCheck = new Point(i, rook.GetPos().Y);
+
+                    foreach (Figure item in _board)
+                    {
+                        if (item._type == TypeFigure.EmptyCell || item._team == turn)
+                            continue;
+                        List<Point> posMoves = FindPossibleMoves(item, _board);
+                        if (posMoves.Contains(posToCheck))
+                            return false;
+                    }
+                }
             }
             else
             {
@@ -371,6 +388,19 @@ namespace Chess
                     if (_board[i, rook.GetPos().Y]._type != TypeFigure.EmptyCell)
                     {
                         return false;
+                    }
+                }
+                for (int i = 4; i >= 0; i--)
+                {
+                    Point posToCheck = new Point(i, rook.GetPos().Y);
+
+                    foreach (Figure item in _board)
+                    {
+                        if (item._type == TypeFigure.EmptyCell || item._team == turn)
+                            continue;
+                        List<Point> posMoves = FindPossibleMoves(item, _board);
+                        if (posMoves.Contains(posToCheck))
+                            return false;
                     }
                 }
             }
@@ -384,13 +414,7 @@ namespace Chess
             if (f._type != TypeFigure.EmptyCell && f._team == turn)
             {
                 List<Point> moves = FindPossibleMoves(f, _board);
-                if (moves.Contains(s.GetPos()) && NotСheck(f, s))
-                {
-                    turn = (byte)(turn == 0 ? 1 : 0);
-                    return true;
-                }
-                if (f._type == TypeFigure.King && s._type == TypeFigure.Rook &&
-                    f._moveCounter == 0 && s._moveCounter == 0 && NotСheck(f, s) && СastlingCheck(s))
+                if (moves.Contains(s.GetPos()) && NotСheckAfterMove(f, s))
                 {
                     turn = (byte)(turn == 0 ? 1 : 0);
                     return true;
