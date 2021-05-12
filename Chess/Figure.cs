@@ -107,7 +107,7 @@ namespace Chess
         }
         
 
-        public void ConvertTo(TypeFigure type, byte team = 2)
+        public void Promotion(TypeFigure type, byte team = 2)
         {
             _team = team;
             _type = type;

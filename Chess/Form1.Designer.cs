@@ -50,7 +50,6 @@
             this.label1.Size = new System.Drawing.Size(29, 13);
             this.label1.TabIndex = 0;
             this.label1.Text = "label";
-            this.label1.Visible = false;
             // 
             // label2
             // 
@@ -60,7 +59,6 @@
             this.label2.Size = new System.Drawing.Size(29, 13);
             this.label2.TabIndex = 1;
             this.label2.Text = "label";
-            this.label2.Visible = false;
             // 
             // label3
             // 
@@ -70,7 +68,6 @@
             this.label3.Size = new System.Drawing.Size(29, 13);
             this.label3.TabIndex = 2;
             this.label3.Text = "label";
-            this.label3.Visible = false;
             // 
             // label4
             // 
@@ -91,6 +88,7 @@
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
+            this.DoubleBuffered = true;
             this.Name = "Chess";
             this.Text = "Chess";
             this.Paint += new System.Windows.Forms.PaintEventHandler(this.Chess_Paint);

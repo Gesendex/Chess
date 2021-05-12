@@ -48,7 +48,7 @@ namespace Chess
         {
             int cellX = (int)(Math.Floor((e.X - _boardX) / (double)80));
             int cellY = (int)(Math.Floor((e.Y - _boardY) / (double)80));
-            if ((cellX >= 0 && cellX <= 8) && (cellY >= 0 && cellY <= 8))
+            if ((cellX >= 0 && cellX < 8) && (cellY >= 0 && cellY < 8))
             {
                 _inDrag = true;
                 _clickDownX = cellX;
@@ -70,11 +70,18 @@ namespace Chess
                 //label3.Text =  "  _clickDownY = " + _clickDownY.ToString() +" _clickDownX = " + _clickDownX.ToString();
                 //label3.Text += "\n_clickUpY = " + _clickUpY.ToString() + " _clickUpX = " + _clickUpX.ToString();
                 //label2.Text = cellX.ToString() + " " + cellY.ToString();
-                
 
-                if (_board.IsCorrectMove(_clickDownX,_clickDownY, _clickUpX, _clickUpY))
+
+                if (_board.IsCorrectMove(_clickDownX, _clickDownY, _clickUpX, _clickUpY))
                 {
-                    _board.MakeAMove(_clickDownX, _clickDownY, _clickUpX, _clickUpY);
+                    if (_board.MakeAMove(_clickDownX, _clickDownY, _clickUpX, _clickUpY) == TypeFigure.EmptyCell)
+                    {
+                        label1.Text += " " + NotationConverter.ConvertToUCI(_clickDownX, _clickDownY, _clickUpX, _clickUpY);
+                    }
+                    else
+                    {
+                        label1.Text = NotationConverter.ConvertToUCI(_clickDownX, _clickDownY, _clickUpX, _clickUpY, TypeFigure.Queen, _board[_clickUpX, _clickUpY]._team);
+                    }
                 }
             }
             _inDrag = false;

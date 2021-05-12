@@ -136,19 +136,22 @@ namespace Chess
             }
 
         }
-        private void Attack(Figure f, Figure s)
+        private TypeFigure Attack(Figure f, Figure s)
         {
-                s._type = f._type;
-                s._team = f._team;
-                s._picture = f._picture;
-                s._moveCounter = f._moveCounter + 1;
-                if (s._type == TypeFigure.Pawn && (s.GetPos().Y == 7 || s.GetPos().Y == 0))
-                {
-                    s.ConvertTo(TypeFigure.Queen, s._team);
-                }
-                f.ConvertTo(TypeFigure.EmptyCell);
+            s._type = f._type;
+            s._team = f._team;
+            s._picture = f._picture;
+            s._moveCounter = f._moveCounter + 1;
+            f.Promotion(TypeFigure.EmptyCell);
+            if (s._type == TypeFigure.Pawn && (s.GetPos().Y == 7 || s.GetPos().Y == 0))
+            {
+                s.Promotion(TypeFigure.Queen, s._team);
+                return TypeFigure.Queen;
+            }
+            return TypeFigure.EmptyCell;
+
         }
-        public void MakeAMove(int fX, int fY, int sX, int sY)
+        public TypeFigure MakeAMove(int fX, int fY, int sX, int sY)
         {
             Figure f = _board[fX, fY];
             
@@ -158,11 +161,13 @@ namespace Chess
                     Сastling(f, true);
                 else
                     Сastling(f, false);
+                return TypeFigure.EmptyCell;
             }
             else
             {
                 Figure s = _board[sX, sY];
-                Attack(f, s);
+                
+                return Attack(f, s);
             }
         }
         private List<Point> FindPossibleMovesInDirection(Figure f, Direction direction, Figure[,] mas)
