@@ -1,11 +1,11 @@
 D:\GitRepository\Chess\Chess\bin\Debug\Chess.exe.config
 D:\GitRepository\Chess\Chess\bin\Debug\Chess.exe
 D:\GitRepository\Chess\Chess\bin\Debug\Chess.pdb
-D:\GitRepository\Chess\Chess\obj\Debug\Chess.csprojAssemblyReference.cache
 D:\GitRepository\Chess\Chess\obj\Debug\Chess.Chess.resources
 D:\GitRepository\Chess\Chess\obj\Debug\Chess.Properties.Resources.resources
 D:\GitRepository\Chess\Chess\obj\Debug\Chess.csproj.GenerateResource.cache
 D:\GitRepository\Chess\Chess\obj\Debug\Chess.exe
 D:\GitRepository\Chess\Chess\obj\Debug\Chess.pdb
-D:\GitRepository\Chess\Chess\obj\Debug\Interop.WMPLib.dll
 D:\GitRepository\Chess\Chess\obj\Debug\Chess.csproj.ResolveComReference.cache
+D:\GitRepository\Chess\Chess\obj\Debug\Chess.csproj.AssemblyReference.cache
+D:\GitRepository\Chess\Chess\obj\Debug\Chess.csproj.CoreCompileInputs.cache

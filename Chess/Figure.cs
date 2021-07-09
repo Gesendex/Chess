@@ -69,6 +69,7 @@ namespace Chess
             this._team = f._team;
             this._type = f._type;
             this._position = f._position;
+            this._moveCounter = f._moveCounter;
             this._picture = GetPictureOrNullForEmptyCell(this._type, this._team);
         }
         public Point GetPos()
@@ -106,7 +107,10 @@ namespace Chess
             return im == null ? null: new Bitmap(im, 80, 80);
         }
         
-
+        /// <summary>
+        ///Превращение в другую фигуру</summary>
+        /// <param name="type"></param>
+        /// <param name="team"></param>
         public void Promotion(TypeFigure type, byte team = 2)
         {
             _team = team;

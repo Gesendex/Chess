@@ -28,69 +28,40 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
+            this.button_PlayWithEngine = new System.Windows.Forms.Button();
             this.SuspendLayout();
-            // 
-            // timer1
-            // 
-            this.timer1.Enabled = true;
-            this.timer1.Interval = 25;
-            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(59, 13);
+            this.label1.Location = new System.Drawing.Point(12, 9);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(29, 13);
+            this.label1.Size = new System.Drawing.Size(34, 13);
             this.label1.TabIndex = 0;
-            this.label1.Text = "label";
+            this.label1.Text = "Ходы";
             // 
-            // label2
+            // button_PlayWithEngine
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(59, 26);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(29, 13);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "label";
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(59, 39);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(29, 13);
-            this.label3.TabIndex = 2;
-            this.label3.Text = "label";
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(541, 39);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(29, 13);
-            this.label4.TabIndex = 3;
-            this.label4.Text = "label";
-            this.label4.Visible = false;
+            this.button_PlayWithEngine.Location = new System.Drawing.Point(628, 12);
+            this.button_PlayWithEngine.Name = "button_PlayWithEngine";
+            this.button_PlayWithEngine.Size = new System.Drawing.Size(184, 23);
+            this.button_PlayWithEngine.TabIndex = 1;
+            this.button_PlayWithEngine.Text = "Играть с шахматным движком";
+            this.button_PlayWithEngine.UseVisualStyleBackColor = true;
+            this.button_PlayWithEngine.Click += new System.EventHandler(this.button_PlayWithEngine_Click);
             // 
             // Chess
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(824, 801);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
+            this.Controls.Add(this.button_PlayWithEngine);
             this.Controls.Add(this.label1);
             this.DoubleBuffered = true;
             this.Name = "Chess";
             this.Text = "Chess";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Chess_FormClosing);
             this.Paint += new System.Windows.Forms.PaintEventHandler(this.Chess_Paint);
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Chess_MouseDown);
             this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Chess_MouseUp);
@@ -100,12 +71,8 @@
         }
 
         #endregion
-
-        private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Button button_PlayWithEngine;
     }
 }
 

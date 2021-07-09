@@ -2,7 +2,6 @@ D:\GitRepository\Chess\Chess\bin\Release\Chess.exe.config
 D:\GitRepository\Chess\Chess\bin\Release\Chess.exe
 D:\GitRepository\Chess\Chess\bin\Release\Chess.pdb
 D:\GitRepository\Chess\Chess\obj\Release\Chess.csprojAssemblyReference.cache
-D:\GitRepository\Chess\Chess\obj\Release\Interop.WMPLib.dll
 D:\GitRepository\Chess\Chess\obj\Release\Chess.csproj.ResolveComReference.cache
 D:\GitRepository\Chess\Chess\obj\Release\Chess.Chess.resources
 D:\GitRepository\Chess\Chess\obj\Release\Chess.Properties.Resources.resources

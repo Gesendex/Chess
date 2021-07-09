@@ -10,8 +10,8 @@ namespace Chess
     {
         private static char[] horizontal = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h' };
         private static char[] vertical = { '8', '7', '6', '5', '4', '3', '2', '1' };
-        private static string horizontalBack = "abcdefgh";
-        private static string verticalBack = "87654321";
+        private static string horInvers = "abcdefgh";
+        private static string vertInvers = "87654321";
 
         private static char[] bfigure = { 'p', 'n', 'b', 'r', 'q', 'k' };
         private static char[] wfigure = { 'P', 'N', 'B', 'R', 'Q', 'K' };
@@ -30,10 +30,10 @@ namespace Chess
         public static int[] ConvertFromUCI(string move)
         {
             int[] indexes = new int[4];
-            indexes[0] = horizontalBack.IndexOf(move[0]);
-            indexes[1] = verticalBack.IndexOf(move[1]);
-            indexes[2] = horizontalBack.IndexOf(move[2]);
-            indexes[3] = verticalBack.IndexOf(move[3]);
+            indexes[0] = horInvers.IndexOf(move[0]);
+            indexes[1] = vertInvers.IndexOf(move[1]);
+            indexes[2] = horInvers.IndexOf(move[2]);
+            indexes[3] = vertInvers.IndexOf(move[3]);
             return indexes;
         }
     }

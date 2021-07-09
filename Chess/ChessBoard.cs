@@ -2,13 +2,12 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-
+// 
 namespace Chess
 {
 
     public class ChessBoard
     {
-        
         private enum Direction
         {
             down,
@@ -24,8 +23,7 @@ namespace Chess
         private Figure[,] _board;
         private int _x;
         private int _y;
-
-        public ChessBoard(int x = 0, int y = 0)
+        public ChessBoard(int x = 0, int y = 0 )
         {
             this._x = x;
             this._y = y;
@@ -89,6 +87,7 @@ namespace Chess
             }
 
         }
+        
         public void MarkPosibleMoves(int x, int y, Graphics gr)
         {
             if (this[x, y]._team != turn)
@@ -108,7 +107,7 @@ namespace Chess
                         posMoves.Remove(pos);
                 }
 
-            for (int i = 0; i < posMoves.Count; )
+            for (int i = 0; i < posMoves.Count;)
             {
                 if (!NotСheckAfterMove(this[x, y], this[posMoves[i].X, posMoves[i].Y]))
                 {
@@ -117,7 +116,7 @@ namespace Chess
                 }
                 i++;
             }
-                
+
             SolidBrush mark = new SolidBrush(Color.FromArgb(127, 255, 255, 255));
             foreach (Point item in posMoves)
                 gr.FillRectangle(mark, item.X * 80 + _x, item.Y * 80 + _y, 80, 80);
@@ -154,7 +153,7 @@ namespace Chess
         public TypeFigure MakeAMove(int fX, int fY, int sX, int sY)
         {
             Figure f = _board[fX, fY];
-            
+
             if (f._type == TypeFigure.King && fY == sY && Math.Abs(fX - sX) == 2)
             {
                 if (sX > fX)
@@ -166,9 +165,13 @@ namespace Chess
             else
             {
                 Figure s = _board[sX, sY];
-                
+
                 return Attack(f, s);
             }
+        }
+        public TypeFigure MakeAMove(int[] indexes)
+        {
+            return MakeAMove(indexes[0], indexes[1], indexes[2], indexes[3]);
         }
         private List<Point> FindPossibleMovesInDirection(Figure f, Direction direction, Figure[,] mas)
         {
@@ -295,7 +298,7 @@ namespace Chess
                     if (mult + p.Y >= 0 && mult + p.Y < 8 && mas[p.X, mult + p.Y]._type == TypeFigure.EmptyCell)
                     {
                         temp.Add(new Point(p.X, mult + p.Y));
-                        if (mas[p.X, mult * 2 + p.Y]._type == TypeFigure.EmptyCell && f._moveCounter == 0)
+                        if (f._moveCounter == 0 && mas[p.X, mult * 2 + p.Y]._type == TypeFigure.EmptyCell)
                             temp.Add(new Point(p.X, mult * 2 + p.Y));
                     }
                     for (int i = p.X - 1; i <= p.X + 1; i += 2)
@@ -354,7 +357,6 @@ namespace Chess
             }
             return possibleMoves.ToList();
         }
-        
         private void Copy(Figure[,] a, Figure[,] b)
         {
             for (int i = 0; i < a.Length / a.GetLength(0); i++)
@@ -367,13 +369,13 @@ namespace Chess
         }
         private bool NotСheckAfterMove(Figure f, Figure s)
         {
-            Figure[,] clone = new Figure[8,8];
+            Figure[,] clone = new Figure[8, 8];
             Copy(_board, clone);
             int fx = f.GetPos().X,
                 fy = f.GetPos().Y,
                 sx = s.GetPos().X,
                 sy = s.GetPos().Y;
-            Point kingPos = new Point(-1,-1);
+            Point kingPos = new Point(-1, -1);
             Attack(clone[fx, fy], clone[sx, sy]);
             foreach (Figure item in clone)
             {
@@ -441,9 +443,13 @@ namespace Chess
 
             return true;
         }
+        public bool IsCorrectMove(int[] indexes)
+        {
+            return IsCorrectMove(indexes[0], indexes[1], indexes[2], indexes[3]);
+        }
         public bool IsCorrectMove(int fX, int fY, int sX, int sY)
         {
-            Figure f = _board[fX, fY]; 
+            Figure f = _board[fX, fY];
             Figure s = _board[sX, sY];
             if (f._type != TypeFigure.EmptyCell && f._team == turn)
             {
@@ -456,7 +462,6 @@ namespace Chess
             }
             return false;
         }
-
         public Figure this[int x, int y]
         {
             get
